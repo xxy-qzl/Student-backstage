@@ -22,7 +22,7 @@ class SiderDemo extends React.Component {
         <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
           <Icon className="logo" type="github" />
           <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-            <Menu.Item key="1">
+            <Menu.Item key="1" onClick={this.handleLink.bind(this, '/')}>
               <Icon type="pie-chart" />
               <span>欢迎你</span>
             </Menu.Item>
@@ -31,12 +31,12 @@ class SiderDemo extends React.Component {
               title={
                 <span>
                   <Icon type="user" />
-                  <span onClick={this.handleLink.bind(this, './user-manage')}>用户管理</span>
+                  <span>用户管理</span>
                 </span>
               }
             >
               <Menu.Item key="3" onClick={this.handleLink.bind(this, './user-list')}>用户列表</Menu.Item>
-              <Menu.Item key="4" onClick={this.handleLink.bind(this, './user-power')}>用户权限</Menu.Item>
+              <Menu.Item key="4" onClick={this.handleLink.bind(this, './user-power')}>权限设置</Menu.Item>
             </SubMenu>
           </Menu>
         </Sider>
