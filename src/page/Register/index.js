@@ -6,8 +6,11 @@ import {
   Icon,
   Input,
   Button,
-  Radio
+  Radio,
+  message
 } from 'antd'
+
+import { LoginUp } from '@/api/UserApi'
 
 import './register.scss'
 
@@ -81,13 +84,26 @@ class Register extends React.PureComponent {
     )
   }
   
+  // 表单提交时的事件监听
   handleSubmit = (e) => {
     e.preventDefault()
     this.props.form.validateFields((errors, value) => {
     if(!errors){
-      console.log(value)
+      // console.log(value)
+      LoginUp( value ).then( response => {
+        const { data } = response
+
+        if( data.code === 0 ){
+          message.success( '注册成功', 2.5, () => {
+            // 跳转至登录页（编程式导航）
+            this.props.history.push( '/login' )
+          } )
+        }else{
+          message.error( data.msg )
+        }
+      })
     }
-    } )
+    })
   }
 }
 
