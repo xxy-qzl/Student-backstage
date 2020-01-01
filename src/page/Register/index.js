@@ -16,10 +16,12 @@ import './register.scss'
 
 class Register extends React.PureComponent {
   state={
-    gender: 1
+    gender: 1,
+    loading: false
   }
   render () {
     const { getFieldDecorator } = this.props.form;
+    const { loading } = this.state
     return (
       <div className="register-box">
         <Row type="flex" align="middle" className="register-row">
@@ -71,7 +73,13 @@ class Register extends React.PureComponent {
             </Form.Item>
   
             <Form.Item>
-            <Button type="primary" htmlType="submit" className="register-form-button" block>
+            <Button 
+            type="primary" 
+            htmlType="submit" 
+            className="register-form-button" 
+            block
+            loading={loading}
+            >
               注 册
             </Button>
             </Form.Item>
@@ -89,16 +97,22 @@ class Register extends React.PureComponent {
     e.preventDefault()
     this.props.form.validateFields((errors, value) => {
     if(!errors){
+      this.setState({
+        loading: true
+      })
       // console.log(value)
       LoginUp( value ).then( response => {
         const { data } = response
 
         if( data.code === 0 ){
-          message.success( '注册成功', 2.5, () => {
+          message.success( '注册成功', 1.5, () => {
             // 跳转至登录页（编程式导航）
             this.props.history.push( '/login' )
           } )
         }else{
+          this.setState({
+            loading: false
+          })
           message.error( data.msg )
         }
       })

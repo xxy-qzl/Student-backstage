@@ -5,13 +5,22 @@ import {
   Form,
   Icon,
   Input,
-  Button
+  Button,
+  message
 } from 'antd'
+
+import { LoginIn } from '@/api/UserApi'
+
+import { connect } from 'react-redux'
 
 import './login.scss'
 
 class Login extends React.PureComponent {
+  state = {
+    loading: false
+  }
   render () {
+    const { loading } = this.state
     const { getFieldDecorator } = this.props.form;
     return (
       <div className="login-box">
@@ -44,7 +53,13 @@ class Login extends React.PureComponent {
             </Form.Item>
 
             <Form.Item>
-            <Button type="primary" htmlType="submit" className="login-form-button" block>
+            <Button 
+            type="primary" 
+            htmlType="submit" 
+            className="login-form-button" 
+            block
+            loading={ loading }
+            >
               登 录
             </Button>
             </Form.Item>
@@ -61,10 +76,43 @@ class Login extends React.PureComponent {
     e.preventDefault()
     this.props.form.validateFields((errors, value) => {
     if(!errors){
-      console.log(value)
+      // console.log(value)
+      this.setState({
+        loading: true
+      })
+      LoginIn( value ).then( response => {
+        const { data } = response
+        if( data.code === 0 ){
+
+          this.props.handleLogin(data.data)
+
+          message.success('登录成功', 1.5, () => {
+            let redirect = this.props.state ? this.props.location.state.redirect : '/'
+            this.props.history.replace(redirect)
+          })
+        }else{
+          this.setState({
+            loading: false
+          })
+          message.error(data.msg)
+        }
+      })
     }
     } )
   }
 }
 
-export default Form.create()(Login)
+export default connect(
+  // 有两个参数，第一个是数据，第二个是动作
+  null,
+  ( dispatch ) => {
+    return {
+      handleLogin ( user ) {
+        dispatch ({
+          type: 'LOGIN',
+          user
+        })
+      }
+    }
+  }
+)(Form.create()(Login))
